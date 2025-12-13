@@ -1,0 +1,296 @@
+[
+  {
+    "ticker": "DIVISLAB.NS",
+    "original_name": "NSE:DIVISLAB",
+    "quantity": 81.0,
+    "invested_value": 336122.13,
+    "avg_price": 4149.655925925926,
+    "live_price": 6426.5,
+    "current_value": 520546.5,
+    "pnl": 184424.37,
+    "pnl_pct": 54.86826172379664,
+    "analysis": {
+      "passed": "1/2",
+      "bullish": false,
+      "bearish": false,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "TITAN.NS",
+    "original_name": "NSE:TITAN",
+    "quantity": 106.0,
+    "invested_value": 314034.0,
+    "avg_price": 2962.5849056603774,
+    "live_price": 3880.199951171875,
+    "current_value": 411301.19482421875,
+    "pnl": 97267.19482421875,
+    "pnl_pct": 30.97345982416514,
+    "analysis": {
+      "passed": "2/2",
+      "bullish": true,
+      "bearish": false,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "HDFCBANK.NS",
+    "original_name": "NSE:HDFCBANK",
+    "quantity": 358.0,
+    "invested_value": 274535.54000000004,
+    "avg_price": 766.8590502793297,
+    "live_price": 1001.5,
+    "current_value": 358537.0,
+    "pnl": 84001.45999999996,
+    "pnl_pct": 30.597663238792304,
+    "analysis": {
+      "passed": "1/2",
+      "bullish": false,
+      "bearish": false,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "LALPATHLAB.NS",
+    "original_name": "NSE:LALPATHLAB",
+    "quantity": 102.0,
+    "invested_value": 228141.03999999998,
+    "avg_price": 2236.676862745098,
+    "live_price": 2874.5,
+    "current_value": 293199.0,
+    "pnl": 65057.96000000002,
+    "pnl_pct": 28.51655274298742,
+    "analysis": {
+      "passed": "0/2",
+      "bullish": false,
+      "bearish": true,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "BAJFINANCE.NS",
+    "original_name": "NSE:BAJFINANCE",
+    "quantity": 280.0,
+    "invested_value": 177956.4,
+    "avg_price": 635.5585714285714,
+    "live_price": 1017.2999877929688,
+    "current_value": 284843.99658203125,
+    "pnl": 106887.59658203126,
+    "pnl_pct": 60.06392384990439,
+    "analysis": {
+      "passed": "1/2",
+      "bullish": false,
+      "bearish": false,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "TRENT.NS",
+    "original_name": "NSE:TRENT",
+    "quantity": 46.0,
+    "invested_value": 150548.87,
+    "avg_price": 3272.8015217391303,
+    "live_price": 4075.39990234375,
+    "current_value": 187468.3955078125,
+    "pnl": 36919.525507812505,
+    "pnl_pct": 24.52328304278372,
+    "analysis": {
+      "passed": "0/2",
+      "bullish": false,
+      "bearish": true,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "BAJAJHFL.NS",
+    "original_name": "NSE:BAJAJHFL",
+    "quantity": 1000.0,
+    "invested_value": 126690.0,
+    "avg_price": 126.69,
+    "live_price": 95.62999725341797,
+    "current_value": 95629.99725341797,
+    "pnl": -31060.00274658203,
+    "pnl_pct": -24.516538595455074,
+    "analysis": {
+      "passed": "0/2",
+      "bullish": false,
+      "bearish": true,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "HDFCGOLD.NS",
+    "original_name": "NSE:HDFCGOLD",
+    "quantity": 1040.0,
+    "invested_value": 109844.8,
+    "avg_price": 105.62,
+    "live_price": 113.0999984741211,
+    "current_value": 117623.99841308594,
+    "pnl": 7779.198413085935,
+    "pnl_pct": 7.081990602273329,
+    "analysis": {
+      "passed": "2/2",
+      "bullish": true,
+      "bearish": false,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "TATAELXSI.NS",
+    "original_name": "NSE:TATAELXSI",
+    "quantity": 14.0,
+    "invested_value": 104122.35,
+    "avg_price": 7437.310714285714,
+    "live_price": 5030.5,
+    "current_value": 70427.0,
+    "pnl": -33695.350000000006,
+    "pnl_pct": -32.36130379308573,
+    "analysis": {
+      "passed": "0/2",
+      "bullish": false,
+      "bearish": true,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "NESTLEIND.NS",
+    "original_name": "NSE:NESTLEIND",
+    "quantity": 80.0,
+    "invested_value": 87930.4,
+    "avg_price": 1099.1299999999999,
+    "live_price": 1238.300048828125,
+    "current_value": 99064.00390625,
+    "pnl": 11133.603906250006,
+    "pnl_pct": 12.661836982715883,
+    "analysis": {
+      "passed": "1/2",
+      "bullish": false,
+      "bearish": false,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "EICHERMOT.NS",
+    "original_name": "NSE:EICHERMOT",
+    "quantity": 12.0,
+    "invested_value": 61517.31,
+    "avg_price": 5126.4425,
+    "live_price": 7229.0,
+    "current_value": 86748.0,
+    "pnl": 25230.690000000002,
+    "pnl_pct": 41.013968263566795,
+    "analysis": {
+      "passed": "2/2",
+      "bullish": true,
+      "bearish": false,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": " GMMPFAUDLR.NS",
+    "original_name": " NSE:GMMPFAUDLR",
+    "quantity": 46.0,
+    "invested_value": 65571.16,
+    "avg_price": 1425.46,
+    "live_price": 1441.21,
+    "current_value": 59089.61,
+    "pnl": 0.0,
+    "pnl_pct": 0.0
+  },
+  {
+    "ticker": "TCS.NS",
+    "original_name": "NSE:TCS",
+    "quantity": 16.0,
+    "invested_value": 54622.88,
+    "avg_price": 3413.93,
+    "live_price": 3220.5,
+    "current_value": 51528.0,
+    "pnl": -3094.8799999999974,
+    "pnl_pct": -5.665904104653577,
+    "analysis": {
+      "passed": "0/2",
+      "bullish": false,
+      "bearish": true,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "506685.BO",
+    "original_name": "BOM:506685",
+    "quantity": 60.0,
+    "invested_value": 29057.0,
+    "avg_price": 484.28333333333336,
+    "live_price": 435.6000061035156,
+    "current_value": 26136.000366210938,
+    "pnl": -2920.9996337890625,
+    "pnl_pct": -10.05265386581224,
+    "analysis": {
+      "passed": "0/2",
+      "bullish": false,
+      "bearish": true,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "M&M.NS",
+    "original_name": "NSE:M&M",
+    "quantity": 10.0,
+    "invested_value": 29023.5,
+    "avg_price": 2902.35,
+    "live_price": 3679.60009765625,
+    "current_value": 36796.0009765625,
+    "pnl": 7772.5009765625,
+    "pnl_pct": 26.78002644947198
+  },
+  {
+    "ticker": "INFY.NS",
+    "original_name": "NSE:INFY",
+    "quantity": 15.0,
+    "invested_value": 21001.05,
+    "avg_price": 1400.07,
+    "live_price": 1598.199951171875,
+    "current_value": 23972.999267578125,
+    "pnl": 2971.9492675781257,
+    "pnl_pct": 14.151431797829755,
+    "analysis": {
+      "passed": "0/2",
+      "bullish": false,
+      "bearish": true,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "CLEAN.NS",
+    "original_name": "NSE:CLEAN",
+    "quantity": 10.0,
+    "invested_value": 14323.4,
+    "avg_price": 1432.34,
+    "live_price": 907.2999877929688,
+    "current_value": 9072.999877929688,
+    "pnl": -5250.400122070312,
+    "pnl_pct": -36.65610205726512,
+    "analysis": {
+      "passed": "0/2",
+      "bullish": false,
+      "bearish": true,
+      "timestamp": "2025-12-13 12:21"
+    }
+  },
+  {
+    "ticker": "GMMPFAUDLR.NS",
+    "original_name": "NSE:GMMPFAUDLR",
+    "quantity": 5.0,
+    "invested_value": 6481.7,
+    "avg_price": 1296.34,
+    "live_price": 1072.699951171875,
+    "current_value": 5363.499755859375,
+    "pnl": -1118.2002441406248,
+    "pnl_pct": -17.251650711088523,
+    "analysis": {
+      "passed": "0/2",
+      "bullish": false,
+      "bearish": true,
+      "timestamp": "2025-12-13 12:21"
+    }
+  }
+]

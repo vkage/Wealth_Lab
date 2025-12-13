@@ -1,0 +1,27 @@
+
+# Environment Variables
+.env
+mysql.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+
+# Charts & Logs
+static/charts/*
+logs/*
+!static/charts/.gitkeep
+!logs/.gitkeep
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Database
+instance/

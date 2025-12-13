@@ -1,0 +1,12 @@
+
+flask
+sqlalchemy
+pymysql
+pandas
+numpy
+yfinance
+ta
+plotly
+python-dotenv
+xlrd
+openpyxl

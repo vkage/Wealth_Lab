@@ -1,0 +1,98 @@
+{
+  "HDFCGOLD.NS": {
+    "passed": "2/2",
+    "bullish": true,
+    "bearish": false,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "BAJAJHFL.NS": {
+    "passed": "0/2",
+    "bullish": false,
+    "bearish": true,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "HDFCBANK.NS": {
+    "passed": "1/2",
+    "bullish": false,
+    "bearish": false,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "BAJFINANCE.NS": {
+    "passed": "1/2",
+    "bullish": false,
+    "bearish": false,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "TITAN.NS": {
+    "passed": "2/2",
+    "bullish": true,
+    "bearish": false,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "LALPATHLAB.NS": {
+    "passed": "0/2",
+    "bullish": false,
+    "bearish": true,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "DIVISLAB.NS": {
+    "passed": "1/2",
+    "bullish": false,
+    "bearish": false,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "NESTLEIND.NS": {
+    "passed": "1/2",
+    "bullish": false,
+    "bearish": false,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "506685.BO": {
+    "passed": "0/2",
+    "bullish": false,
+    "bearish": true,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "TRENT.NS": {
+    "passed": "0/2",
+    "bullish": false,
+    "bearish": true,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "GMMPFAUDLR.NS": {
+    "passed": "0/2",
+    "bullish": false,
+    "bearish": true,
+    "timestamp": "2025-12-13 12:48"
+  },
+  "TCS.NS": {
+    "passed": "0/2",
+    "bullish": false,
+    "bearish": true,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "INFY.NS": {
+    "passed": "0/2",
+    "bullish": false,
+    "bearish": true,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "TATAELXSI.NS": {
+    "passed": "0/2",
+    "bullish": false,
+    "bearish": true,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "EICHERMOT.NS": {
+    "passed": "2/2",
+    "bullish": true,
+    "bearish": false,
+    "timestamp": "2025-12-13 12:43"
+  },
+  "CLEAN.NS": {
+    "passed": "0/2",
+    "bullish": false,
+    "bearish": true,
+    "timestamp": "2025-12-13 12:43"
+  }
+}

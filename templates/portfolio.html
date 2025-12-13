@@ -1,0 +1,586 @@
+{% extends "layouts/base.html" %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+    <!-- Main Content -->
+    <div class="lg:col-span-4 space-y-8">
+        <div class="flex justify-between items-end">
+            <div>
+                <div class="flex items-center space-x-3">
+                    <h2 class="text-3xl font-bold text-white">{{ current_ptf_name }}</h2>
+                    {% if current_pid != 'all' %}
+                    <button onclick="renamePortfolio({{ current_pid }}, '{{ current_ptf_name }}')"
+                        class="text-gray-500 hover:text-white transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                            </path>
+                        </svg>
+                    </button>
+                    {% endif %}
+                </div>
+                <p class="text-gray-400 mt-1">Track momentum health of your holdings.</p>
+            </div>
+
+            <!-- Portfolio Metrics -->
+            <div class="flex space-x-8 text-right items-center">
+                <div>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Invested</p>
+                    <p class="text-xl font-bold text-gray-300">₹{{ "{:,.0f}".format(summary.total_invested) }}</p>
+                </div>
+                <div>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Current Val</p>
+                    <p class="text-2xl font-bold text-white">₹{{ "{:,.0f}".format(summary.current_value) }}</p>
+                </div>
+                {% if current_pid != 'all' %}
+                <div>
+                    <button onclick="openModal()"
+                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center shadow-lg transition">
+                        <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
+                        </svg>
+                        Add Stock
+                    </button>
+                </div>
+                {% endif %}
+                <div>
+                    <p class="text-xs text-gray-500 uppercase tracking-wider">Total P/L</p>
+                    <div class="text-xl font-bold {{ 'text-green-400' if summary.total_pnl >= 0 else 'text-red-400' }}">
+                        {{ "{:+,.0f}".format(summary.total_pnl) }}
+                        <span class="text-sm font-normal">({{ "{:+.1f}".format(summary.total_pnl_pct) }}%)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions / Warning -->
+        <div class="bg-blue-900/20 border border-blue-500/30 rounded-xl p-4 flex items-start">
+            <svg class="w-6 h-6 text-blue-400 mr-3 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+                <h4 class="font-semibold text-blue-400">Analysis Mode</h4>
+                <p class="text-sm text-gray-300">Click "Analyze Health" to run live momentum checks on all stocks.</p>
+            </div>
+            <button onclick="runPortfolioScan()" id="scanBtn"
+                class="ml-auto bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition shadow-lg">
+                Analyze Health
+            </button>
+        </div>
+
+        <!-- Portfolio Table -->
+        <div class="glass-panel rounded-2xl overflow-hidden">
+            <table class="w-full text-left border-collapse" id="portfolioTable">
+                <thead>
+                    <tr class="border-b border-gray-700 bg-gray-800/50 text-gray-400 text-sm uppercase tracking-wider">
+                        <th class="p-6 cursor-pointer hover:text-white transition" onclick="sortTable(0)">Stock</th>
+                        <th class="p-6 text-right">Holdings</th>
+                        <th class="p-6 text-right cursor-pointer hover:text-white transition" onclick="sortTable(2)">
+                            Valuation ⇅</th>
+                        <th class="p-6 text-right cursor-pointer hover:text-white transition" onclick="sortTable(3)">P/L
+                            ⇅
+                        </th>
+                        <th class="p-6 text-center cursor-pointer hover:text-white transition" onclick="sortTable(4)">
+                            Momentum Health ⇅</th>
+                        <th class="p-6 text-center">Purchased</th>
+                        <th class="p-6 text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                    {% for stock in stocks %}
+                    <tr class="hover:bg-white/5 transition group" id="row-{{ stock.ticker }}">
+                        <td class="p-6" data-sort="{{ stock.ticker }}">
+                            <div class="font-bold text-white stock-ticker">{{ stock.ticker }}</div>
+                            <div class="text-xs text-gray-500">{{ stock.original_name }}</div>
+                            {% if current_pid == 'all' %}
+                            <div class="text-[10px] text-blue-400 mt-1 uppercase tracking-wide">PID: {{
+                                stock.portfolio_id }}</div>
+                            {% endif %}
+                        </td>
+                        <td class="p-6 text-right text-gray-300">
+                            <div class="font-bold">{{ "{:,.0f}".format(stock.quantity) }} Qty</div>
+                            <div class="text-xs text-gray-500">Avg: {{ "{:,.1f}".format(stock.avg_price) }}</div>
+                        </td>
+                        <td class="p-6 text-right font-mono text-gray-300" data-sort="{{ stock.current_value }}">
+                            <div class="font-bold">₹{{ "{:,.0f}".format(stock.current_value) }}</div>
+                            <div class="text-xs text-gray-500">Inv: ₹{{ "{:,.0f}".format(stock.invested_value) }}</div>
+                        </td>
+                        <td class="p-6 text-right font-mono {{ 'text-green-400' if stock.pnl >= 0 else 'text-red-400' }}"
+                            data-sort="{{ stock.pnl }}">
+                            {{ "{:+.0f}".format(stock.pnl) }} <br>
+                            <span class="text-xs opacity-70">{{ "{:+.1f}".format(stock.pnl_pct) }}%</span>
+                        </td>
+                        <td class="p-6 text-center" {% if stock.analysis %} {% set s=stock.analysis %} {% set
+                            score=s.passed.split('/')[0]|int %} {% set total=s.passed.split('/')[1]|int %} {% if
+                            score==total %} data-sort="3" {% elif score> 0 %} data-sort="2"
+                            {% else %} data-sort="1"
+                            {% endif %}
+                            {% else %}
+                            data-sort="0"
+                            {% endif %}>
+
+                            {% if stock.analysis %}
+                            {% set s = stock.analysis %}
+                            {% set score = s.passed.split('/')[0]|int %}
+                            {% set total = s.passed.split('/')[1]|int %}
+                            {% if score == total %}
+                            <span
+                                class="status-badge inline-block px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white shadow-lg shadow-green-900/50">STRONG
+                                BUY</span>
+                            {% elif score > 0 %}
+                            <span
+                                class="status-badge inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-500 text-white">MIXED</span>
+                            {% else %}
+                            <span
+                                class="status-badge inline-block px-3 py-1 rounded-full text-xs font-bold bg-red-500 text-white">WEAK</span>
+                            {% endif %}
+                            <div class="text-[10px] text-gray-500 mt-1">Last: {{ s.timestamp }}</div>
+                            {% else %}
+                            <span
+                                class="status-badge inline-block px-3 py-1 rounded-full text-xs font-bold bg-gray-700 text-gray-500">
+                                Waiting
+                            </span>
+                            {% endif %}
+                        </td>
+                        <td class="p-6 text-center text-sm text-gray-400">
+                            <div class="group/date flex items-center justify-center space-x-2">
+                                <span>{{ stock.purchase_date if stock.purchase_date else '-' }}</span>
+                                <button
+                                    onclick="openDateModal('{{ stock.ticker }}', '{{ stock.purchase_date }}', {{ stock.portfolio_id }})"
+                                    class="text-gray-600 hover:text-white opacity-0 group-hover/date:opacity-100 transition">
+                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                        </path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                        <td class="p-6 text-center">
+                            <div class="flex items-center justify-center space-x-3">
+                                <a href="{{ url_for('home', q=stock.ticker) }}"
+                                    class="text-blue-400 hover:text-blue-300 text-sm font-medium" title="Analyze">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                                        </path>
+                                    </svg>
+                                </a>
+                                {% if current_pid != 'all' %}
+                                <button
+                                    onclick="openModal('{{ stock.ticker }}', {{ stock.quantity }}, {{ stock.avg_price }})"
+                                    class="text-gray-400 hover:text-white" title="Add More / Edit">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                        </path>
+                                    </svg>
+                                </button>
+                                <button onclick="removeStock('{{ stock.ticker }}')"
+                                    class="text-gray-400 hover:text-red-500" title="Remove">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                        </path>
+                                    </svg>
+                                </button>
+                                {% else %}
+                                <span class="text-xs text-gray-600">Locked</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Sidebar: Portfolios -->
+    <div class="lg:col-span-1 space-y-6">
+        <div class="glass-panel p-4 rounded-xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-gray-400 font-semibold uppercase text-xs">Portfolios</h3>
+                <button onclick="createPortfolio()" class="text-blue-400 hover:text-white text-xs font-bold">+
+                    NEW</button>
+            </div>
+
+            <ul class="space-y-2">
+                <li>
+                    <a href="{{ url_for('portfolio_view', pid='all') }}"
+                        class="block px-3 py-2 rounded-lg transition {{ 'bg-blue-600 text-white shadow-lg' if current_pid == 'all' else 'text-gray-400 hover:bg-white/5 hover:text-white' }}">
+                        All Portfolios
+                    </a>
+                </li>
+                {% for p in portfolios %}
+                <li class="group flex justify-between items-center">
+                    <a href="{{ url_for('portfolio_view', pid=p.id) }}"
+                        class="flex-1 block px-3 py-2 rounded-lg transition {{ 'bg-blue-600 text-white shadow-lg' if current_pid == p.id else 'text-gray-400 hover:bg-white/5 hover:text-white' }}">
+                        {{ p.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+<!-- Edit/Add Modal -->
+<div id="stockModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+    <div class="bg-gray-800 rounded-xl p-8 w-96 border border-gray-700 shadow-2xl">
+        <h3 id="modalTitle" class="text-xl font-bold text-white mb-6">Add Stock</h3>
+        <input type="hidden" id="isEdit" value="false">
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-xs text-gray-500 uppercase mb-1">Ticker</label>
+                <input type="text" id="mTicker"
+                    class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500 uppercase">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase mb-1">Quantity</label>
+                    <input type="number" id="mQty"
+                        class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs text-gray-500 uppercase mb-1">Avg Price</label>
+                    <input type="number" id="mPrice"
+                        class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                </div>
+            </div>
+            <!-- Phase 13: Date Input -->
+            <div>
+                <label class="block text-xs text-gray-500 uppercase mb-1">Purchase Date (Optional)</label>
+                <input type="date" id="mDate"
+                    class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500">
+                <p class="text-[10px] text-gray-500 mt-1">*Defaults to Today for new buys.</p>
+            </div>
+        </div>
+
+        <div class="mt-8 flex justify-end space-x-3">
+            <button onclick="closeModal()" class="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
+            <button onclick="saveStock()"
+                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">Save
+                Transaction</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Date Modal -->
+<div id="dateModal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-50">
+    <div class="bg-gray-800 rounded-xl p-8 w-80 border border-gray-700 shadow-2xl">
+        <h3 class="text-lg font-bold text-white mb-4">Edit Purchase Date</h3>
+        <input type="hidden" id="dTicker">
+        <input type="hidden" id="dPid">
+
+        <div class="mb-6">
+            <label class="block text-xs text-gray-500 uppercase mb-1">Initial Date</label>
+            <input type="date" id="dDateInput"
+                class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="flex justify-end space-x-3">
+            <button
+                onclick="document.getElementById('dateModal').classList.add('hidden'); document.getElementById('dateModal').classList.remove('flex')"
+                class="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
+            <button onclick="saveDate()"
+                class="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium">Update</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const today = new Date().toISOString().split('T')[0];
+        const mDate = document.getElementById('mDate');
+        if (mDate) mDate.value = today;
+    });
+
+    const URL_PREFIX = "";
+    const CURRENT_PID = "{{ current_pid }}"; // Inject PID from template
+
+    function openModal(ticker = null, qty = null, price = null) {
+        const modal = document.getElementById('stockModal');
+        const title = document.getElementById('modalTitle');
+        const mTicker = document.getElementById('mTicker');
+        const mQty = document.getElementById('mQty');
+        const mPrice = document.getElementById('mPrice');
+        const mDate = document.getElementById('mDate');
+        const isEdit = document.getElementById('isEdit');
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+
+        if (ticker) {
+            title.innerText = "Add More / Edit Stock";
+            mTicker.value = ticker;
+            mTicker.readOnly = true;
+            mTicker.classList.add('opacity-50', 'cursor-not-allowed'); // Add styling for disabled
+            mQty.value = ""; // Don't prefill existing QTY, let them add NEW qty (Transaction based)
+            mPrice.value = price; // Prefill current avg price as reference
+            isEdit.value = "true";
+            mQty.focus();
+        } else {
+            title.innerText = "Add Stock";
+            mTicker.value = "";
+            mTicker.readOnly = false;
+            mTicker.classList.remove('opacity-50', 'cursor-not-allowed'); // Remove styling
+            mQty.value = "";
+            mPrice.value = "";
+            isEdit.value = "false";
+            mTicker.focus();
+        }
+
+        // Reset Date to today always for new transaction
+        mDate.value = new Date().toISOString().split('T')[0];
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('stockModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    function openDateModal(ticker, current_date, pid) {
+        const modal = document.getElementById('dateModal');
+        document.getElementById('dTicker').value = ticker;
+        document.getElementById('dPid').value = pid;
+        document.getElementById('dDateInput').value = (current_date && current_date !== 'None') ? current_date : new Date().toISOString().split('T')[0];
+
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    async function saveDate() {
+        const ticker = document.getElementById('dTicker').value;
+        const pid = document.getElementById('dPid').value;
+        const date = document.getElementById('dDateInput').value;
+
+        try {
+            const res = await fetch('/edit_stock_date', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ticker, portfolio_id: pid, date })
+            });
+            const data = await res.json();
+            if (data.status === 'success') location.reload();
+            else alert("Error: " + data.message);
+        } catch (e) {
+            console.error(e);
+            alert("Failed to update date");
+        }
+    }
+
+    async function saveStock() {
+        const ticker = document.getElementById('mTicker').value;
+        const qty = document.getElementById('mQty').value;
+        const price = document.getElementById('mPrice').value;
+        const date = document.getElementById('mDate').value;
+        const isEdit = document.getElementById('isEdit').value === "true";
+
+        // If pid is known from context (current_pid) we need to pass it?
+        // Or if simple add form assumes default.
+        // We need to inject current PID into JS
+        const urlParams = new URLSearchParams(window.location.search);
+        let pid = urlParams.get('pid') || 1;
+        if (pid === 'all') pid = 1; // Default to 1 if on aggregate view, or ask user?
+        // For simplicity, default to 1. User can switch portfolio to add.
+
+        if (!ticker || !qty || !price) {
+            alert("Please fill all fields");
+            return;
+        }
+
+        // Block Add if in "All" view (PID=all)
+        if (!isEdit && CURRENT_PID === 'all') {
+            alert("Please select a specific portfolio to add stocks.");
+            return;
+        }
+
+        const endpoint = isEdit ? '/portfolio/update' : '/add_stock';
+
+        try {
+            const res = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ticker: ticker,
+                    quantity: qty,
+                    avg_price: price,
+                    portfolio_id: pid, // Use the determined pid
+                    purchase_date: date
+                })
+            });
+
+            const data = await res.json();
+            if (data.status === 'success' || data.success) { // Handle both status and success keys
+                closeModal();
+                window.location.reload();
+            } else {
+                alert("Error: " + (data.message || "Operation failed"));
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Request failed");
+        }
+    }
+
+    async function removeStock(ticker) {
+        if (!confirm(`Are you sure you want to remove ${ticker}?`)) return;
+
+        try {
+            const res = await fetch('/portfolio/remove', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    ticker,
+                    portfolio_id: CURRENT_PID
+                })
+            });
+            const data = await res.json();
+            if (data.success) location.reload();
+            else alert("Operation failed: " + (data.message || "Unknown error"));
+        } catch (e) {
+            console.log(e);
+            alert("Network error");
+        }
+    }
+
+    async function createPortfolio() {
+        const name = prompt("Enter Portfolio Name:");
+        if (!name) return;
+
+        try {
+            const res = await fetch('/api/portfolios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            });
+            const data = await res.json();
+            if (data.success) {
+                window.location.href = `{{ url_for('portfolio_view') }}?pid=${data.id}`;
+            } else {
+                alert("Error creating portfolio: " + (data.message || "Unknown error"));
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Network error creating portfolio");
+        }
+    }
+
+    async function renamePortfolio(pid, oldName) {
+        const name = prompt("Rename Portfolio:", oldName);
+        if (!name || name === oldName) return;
+
+        try {
+            const res = await fetch(`/api/portfolios/${pid}/rename`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name })
+            });
+            const data = await res.json();
+            if (data.success) location.reload();
+            else alert("Error renaming portfolio: " + (data.message || "Unknown error"));
+        } catch (e) {
+            console.error(e);
+            alert("Network error renaming portfolio");
+        }
+    }
+
+    let sortDirection = 1; // 1 = asc, -1 = desc
+
+    function sortTable(n) {
+        const table = document.getElementById("portfolioTable");
+        const tbody = table.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+
+        sortDirection *= -1; // Toggle direction
+        const dir = sortDirection;
+
+        rows.sort((a, b) => {
+            const cellA = a.getElementsByTagName("td")[n];
+            const cellB = b.getElementsByTagName("td")[n];
+
+            // Prefer data-sort attribute, fallback to innerText
+            let valA = cellA.getAttribute('data-sort');
+            let valB = cellB.getAttribute('data-sort');
+
+            if (valA === null) valA = cellA.innerText.toLowerCase();
+            if (valB === null) valB = cellB.innerText.toLowerCase();
+
+            // Try numeric
+            const numA = parseFloat(valA);
+            const numB = parseFloat(valB);
+
+            if (!isNaN(numA) && !isNaN(numB)) {
+                return (numA - numB) * dir;
+            }
+
+            if (valA < valB) return -1 * dir;
+            if (valA > valB) return 1 * dir;
+            return 0;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+    }
+
+    async function runPortfolioScan() {
+        const btn = document.getElementById('scanBtn');
+        btn.disabled = true;
+        btn.innerText = "Analyzing...";
+
+        const rows = document.querySelectorAll('tr[id^="row-"]');
+
+        for (let row of rows) {
+            const ticker = row.querySelector('.stock-ticker').innerText;
+            const badge = row.querySelector('.status-badge');
+
+            if (!badge) continue; // Skip if no badge found
+
+            badge.innerText = "Loading...";
+            badge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-900/50 text-yellow-500 animate-pulse";
+
+            try {
+                const res = await fetch(`/analyze_ticker?ticker=${encodeURIComponent(ticker)}`);
+                const data = await res.json();
+
+                if (data.error) {
+                    badge.innerText = "Error";
+                    badge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-red-900/50 text-red-500";
+                    continue;
+                }
+
+                // Determine health
+                const passed = parseInt(data.summary.strategies_passed.split('/')[0]);
+                const total = parseInt(data.summary.strategies_passed.split('/')[1]);
+
+                if (passed === total) {
+                    badge.innerText = "STRONG BUY";
+                    badge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-green-500 text-white shadow-lg shadow-green-900/50";
+                } else if (passed > 0) {
+                    badge.innerText = "MIXED";
+                    badge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-yellow-500 text-white";
+                } else {
+                    badge.innerText = "WEAK";
+                    badge.className = "inline-block px-3 py-1 rounded-full text-xs font-bold bg-red-500 text-white";
+                }
+
+            } catch (e) {
+                console.error(e);
+                badge.innerText = "Failed";
+            }
+        }
+
+        btn.innerText = "Scan Complete";
+        btn.disabled = false;
+    }
+</script>
+
+{% endblock %}

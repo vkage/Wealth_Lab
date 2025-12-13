@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minervini Analysis Engine</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        body { background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; padding-top: 50px; color: #333; }
+        .main-container { max-width: 1100px; margin: 0 auto; position: relative; }
+        
+        .close-app-btn { position: absolute; top: -40px; right: 0; background-color: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); padding: 5px 15px; border-radius: 20px; cursor: pointer; text-decoration: none; }
+        .close-app-btn:hover { background-color: #dc3545; border-color: #dc3545; }
+
+        .search-card { background: rgba(255, 255, 255, 0.98); padding: 3rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); margin-bottom: 30px; }
+        .history-card { background: rgba(255, 255, 255, 0.95); border-radius: 12px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        
+        .btn-primary { background-color: #1e3c72; border: none; padding: 12px 20px; font-weight: bold; }
+        .btn-warning { font-weight: bold; color: #333; }
+        
+        /* Progress Bar Styles */
+        #scanProgressContainer { display: none; margin-top: 20px; padding: 20px; background: #fff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .progress { height: 25px; }
+        .badge-pass { background-color: #d1e7dd; color: #0f5132; padding: 8px 12px; border-radius: 6px; font-weight: bold; }
+        .badge-fail { background-color: #f8d7da; color: #842029; padding: 8px 12px; border-radius: 6px; font-weight: bold; }
+        .text-buy { color: #198754; font-weight: 600; }
+        .text-stop { color: #dc3545; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        
+        <button onclick="closeApp()" class="close-app-btn"><i class="bi bi-power"></i> Close App</button>
+
+        <div class="search-card text-center">
+            <h2 class="mb-3 fw-bold" style="color: #1e3c72;">🚀 Stock Market Wizard</h2>
+            <p class="text-muted mb-4">Professional Minervini Trend Analysis (NSE India)</p>
+            
+            <form action="/analyze" method="POST" autocomplete="off" class="mb-4">
+                <div class="input-group input-group-lg">
+                    <span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span>
+                    <input type="text" id="tickerInput" name="ticker" class="form-control border-start-0" placeholder="Enter Ticker (e.g., RELIANCE)" list="tickerList" required>
+                    <button type="submit" class="btn btn-primary">Analyze Single</button>
+                </div>
+                <datalist id="tickerList"></datalist>
+            </form>
+
+            <div class="d-grid gap-2">
+                <button onclick="startBatchScan()" class="btn btn-warning btn-lg shadow-sm">
+                    <i class="bi bi-lightning-charge-fill"></i> Run Full Market Scan (Saved Tickers)
+                </button>
+            </div>
+
+            <div id="scanProgressContainer">
+                <h5 class="text-start mb-2">Scanning Market... <span id="scanStatusText" class="float-end text-muted small">Initializing</span></h5>
+                <div class="progress mb-2">
+                    <div id="scanProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%"></div>
+                </div>
+                <div class="text-start small text-muted">Currently Analyzing: <b id="currentTicker">...</b></div>
+            </div>
+        </div>
+
+        {% if history %}
+        <div class="history-card">
+            <h4 class="mb-3 text-secondary d-flex justify-content-between">
+                <span><i class="bi bi-clock-history"></i> Recent Analysis History</span>
+                <a href="/" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-clockwise"></i> Refresh</a>
+            </h4>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Time</th>
+                            <th>Ticker</th>
+                            <th>Status</th>
+                            <th>Price</th>
+                            <th>Buy Point</th>
+                            <th>Stop Loss</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in history %}
+                        <tr>
+                            <td class="text-muted small">{{ row.Timestamp }}</td>
+                            <td class="fw-bold">{{ row.Ticker }}</td>
+                            <td><span class="{{ 'badge-pass' if row.Status == 'PASS' else 'badge-fail' }}">{{ row.Status }}</span></td>
+                            <td>₹{{ row.Price }}</td>
+                            <td class="text-buy">{% if row.Pivot_Buy_Point %}₹{{ row.Pivot_Buy_Point }}{% else %}-{% endif %}</td>
+                            <td class="text-stop">{% if row.Stop_Loss %}₹{{ row.Stop_Loss }}{% else %}-{% endif %}</td>
+                            <td><a href="/view_history?ticker={{ row.Ticker }}&timestamp={{ row.Timestamp }}" class="btn btn-sm btn-outline-primary">View</a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Autocomplete
+        const input = document.getElementById('tickerInput');
+        const list = document.getElementById('tickerList');
+        input.addEventListener('input', async function() {
+            const query = this.value;
+            if (query.length < 2) return;
+            try {
+                const response = await fetch(`/suggest?q=${query}`);
+                const suggestions = await response.json();
+                list.innerHTML = '';
+                suggestions.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    list.appendChild(option);
+                });
+            } catch (e) {}
+        });
+
+        // Shutdown
+        function closeApp() {
+            if(confirm("Stop server?")) {
+                fetch('/shutdown', { method: 'POST' }).then(() => window.close());
+            }
+        }
+
+        // BATCH SCAN LOGIC
+        function startBatchScan() {
+            if(!confirm("This will analyze all saved tickers. It may take a few minutes. Continue?")) return;
+            
+            fetch('/scan_market', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.status === 'started') {
+                        document.getElementById('scanProgressContainer').style.display = 'block';
+                        monitorScan();
+                    } else {
+                        alert(data.msg);
+                    }
+                });
+        }
+
+        function monitorScan() {
+            const interval = setInterval(() => {
+                fetch('/scan_status')
+                    .then(res => res.json())
+                    .then(data => {
+                        // Update UI
+                        const bar = document.getElementById('scanProgressBar');
+                        const txt = document.getElementById('scanStatusText');
+                        const cur = document.getElementById('currentTicker');
+
+                        bar.style.width = data.progress + "%";
+                        txt.innerText = `${data.processed} / ${data.total}`;
+                        cur.innerText = data.current;
+
+                        if (!data.running && data.total > 0 && data.progress === 100) {
+                            clearInterval(interval);
+                            cur.innerText = "Complete! Refreshing...";
+                            setTimeout(() => { location.reload(); }, 2000);
+                        }
+                    });
+            }, 1000); // Check every 1 second
+        }
+    </script>
+</body>
+</html>
