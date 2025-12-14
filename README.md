@@ -1,7 +1,16 @@
 
-# Momentum Analysis Dashboard
+# WealthLab
 
-A Python-based financial analysis tool that implements **Mark Minervini's Trend Template** and **Gary Antonacci's Dual Momentum** strategies to help you analyze stocks and manage your portfolio.
+**WealthLab** is a Python-based financial analysis tool that implements **Mark Minervini's Trend Template** and **Gary Antonacci's Dual Momentum** strategies to help you analyze stocks and manage your portfolio.
+
+## GitHub Details
+
+**Description:**
+A powerful financial analysis dashboard implementing Minervini Trend Template and Dual Momentum strategies for smart stock screening and portfolio management.
+
+**Topics:**
+finance stock-market python flask algotrading minervini dual-momentum technical-analysis portfolio-manager investment-tools
+
 
 ![Dashboard Preview](static/dashboard.png) *(Add a screenshot here if you have one)*
 

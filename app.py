@@ -336,5 +336,5 @@ def remove_watchlist():
 
 
 if __name__ == '__main__':
-    print("Starting Momentum Analysis App...")
+    print("Starting WealthLab App...")
     app.run(debug=True, port=5000)
