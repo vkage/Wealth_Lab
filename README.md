@@ -12,7 +12,7 @@ A powerful financial analysis dashboard implementing Minervini Trend Template an
 finance stock-market python flask algotrading minervini dual-momentum technical-analysis portfolio-manager investment-tools
 
 
-![Dashboard Preview](static/dashboard.png) *(Add a screenshot here if you have one)*
+![Dashboard Preview](static/dashboard.png)
 
 ## Features
 
